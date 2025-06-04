@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Block all search engine crawlers from indexing any page
