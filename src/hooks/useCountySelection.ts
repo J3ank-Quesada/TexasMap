@@ -1,5 +1,5 @@
+import useCallForCountyInfo from '@/hooks/useCallForCountyInfo';
 import { useCallback, useState } from 'react';
-import useCallForCountyInfo from './useCallForCountyInfo';
 
 /**
  * Custom hook for managing county selection and side panel state
@@ -35,25 +35,16 @@ export const useCountySelection = () => {
   const selectCounty = useCallback(async (countyName: string): Promise<void> => {
     setSelectedCounty(countyName);
     setIsPanelVisible(true);
-    console.log(`🎯 County selected: ${countyName}`);
     
     try {
       // Fetch Census data for the selected county (will use cache if available)
       await callForCountyInfo({ countyName });
       
-      const cacheStats = getCacheStats();
-      if (isFromCache) {
-        console.log(`✅ Data loaded from cache for ${countyName}`);
-        console.log(`📊 Cache stats: ${cacheStats.size} entries, newest: ${cacheStats.newestEntry}`);
-      } else {
-        console.log(`🌐 Data fetched from API for ${countyName}`);
-        console.log(`📊 Cache updated: ${cacheStats.size} entries total`);
-      }
     } catch (err) {
       console.error(`❌ Failed to fetch data for ${countyName}:`, err);
       // Continue showing the panel even if API call fails
     }
-  }, [callForCountyInfo, isFromCache, getCacheStats]);
+  }, [callForCountyInfo]);
 
   /**
    * Closes the side panel and clears selection

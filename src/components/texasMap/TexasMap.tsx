@@ -1,11 +1,11 @@
 'use client';
 
+import SidePanel from '@/components/sidePanel/SidePanel';
+import MapTooltip from '@/components/texasMap/MapTooltip';
+import { useCountySelection } from '@/hooks/useCountySelection';
+import { useSVGMapInteractions } from '@/hooks/useSVGMapInteractions';
+import { useTooltip } from '@/hooks/useTooltip';
 import React, { useEffect, useState } from 'react';
-import { useCountySelection } from '../../hooks/useCountySelection';
-import { useSVGMapInteractions } from '../../hooks/useSVGMapInteractions';
-import { useTooltip } from '../../hooks/useTooltip';
-import SidePanel from '../sidePanel/SidePanel';
-import MapTooltip from './MapTooltip';
 
 /**
  * TexasMap Component - Displays an interactive SVG map of Texas Counties

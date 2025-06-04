@@ -1,6 +1,6 @@
+import { isValidCountyName } from '@/utils/countyUtils';
+import { setDefaultCountyStyles, setHoverCountyStyles } from '@/utils/mapStyling';
 import { useCallback } from 'react';
-import { isValidCountyName } from '../utils/countyUtils';
-import { setDefaultCountyStyles, setHoverCountyStyles } from '../utils/mapStyling';
 
 /**
  * Interface for SVG map interaction handlers
@@ -27,7 +27,6 @@ export const useSVGMapInteractions = (handlers: SVGMapHandlers) => {
   const setupSVGInteractions = useCallback((iframe: HTMLIFrameElement): void => {
     try {
       const svgDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      console.log('SVG Document:', svgDoc);
       
       if (!svgDoc) {
         console.error('Could not access SVG document');
@@ -35,11 +34,9 @@ export const useSVGMapInteractions = (handlers: SVGMapHandlers) => {
       }
 
       const counties = svgDoc.querySelectorAll('path[id]');
-      console.log('Found counties:', counties.length);
       
       counties.forEach((county) => {
         const countyName = county.getAttribute('id');
-        console.log('Processing county:', countyName);
         
         if (!countyName || !isValidCountyName(countyName)) {
           return;
@@ -52,20 +49,17 @@ export const useSVGMapInteractions = (handlers: SVGMapHandlers) => {
         
         // Add event listeners for tooltip and interaction
         county.addEventListener('mouseenter', (event) => {
-          console.log('Mouse enter:', countyName);
           handlers.onCountyHover(countyName, event);
           setHoverCountyStyles(countyElement);
         });
         
         county.addEventListener('mouseleave', () => {
-          console.log('Mouse leave:', countyName);
           handlers.onCountyLeave();
           // Reset to default styles
           setDefaultCountyStyles(countyElement);
         });
         
         county.addEventListener('click', () => {
-          console.log('County clicked:', countyName);
           handlers.onCountyClick(countyName);
         });
       });
@@ -79,7 +73,6 @@ export const useSVGMapInteractions = (handlers: SVGMapHandlers) => {
    * @param event - Load event from iframe
    */
   const handleIframeLoad = useCallback((event: React.SyntheticEvent<HTMLIFrameElement>): void => {
-    console.log('SVG iframe loaded');
     const iframe = event.target as HTMLIFrameElement;
     setupSVGInteractions(iframe);
   }, [setupSVGInteractions]);

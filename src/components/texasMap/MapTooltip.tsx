@@ -1,7 +1,7 @@
 'use client';
 
+import { formatCountyName } from '@/utils/countyUtils';
 import React from 'react';
-import { formatCountyName } from '../../utils/countyUtils';
 
 /**
  * Interface for tooltip data

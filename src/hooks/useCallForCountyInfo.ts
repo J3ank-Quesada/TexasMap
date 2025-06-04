@@ -1,8 +1,8 @@
 import { getCountyInfo, processCensusData } from "@/apis/countyInfoAPIs";
+import { useHttpRequest } from "@/hooks/useHttpRequest";
 import { countyDataCache } from "@/services/countyDataCache";
 import { CountyInfo, GetCountyInfoData } from "@/types";
 import { useCallback, useRef, useState } from 'react';
-import { useHttpRequest } from "./useHttpRequest";
 
 /**
  * Normalize county name for consistent caching
@@ -38,20 +38,14 @@ export default function useCallForCountyInfo() {
         try {
             // Normalize the county name for consistent cache lookup
             const normalizedCountyName = normalizeCountyName(countyName);
-            console.log(`🔍 Looking for county: "${countyName}" -> normalized: "${normalizedCountyName}"`);
             
             // Check cache first using the cache service
             const cachedData = countyDataCache.get(normalizedCountyName);
             if (cachedData) {
-                console.log(`✅ Cache HIT for "${normalizedCountyName}" - using cached data`);
-                console.log(`📊 Cache stats:`, countyDataCache.getStats());
                 setCacheData(cachedData);
                 setIsFromCache(true);
                 return;
             }
-
-            console.log(`❌ Cache MISS for "${normalizedCountyName}" - fetching from API`);
-            console.log(`📊 Current cache contents:`, countyDataCache.getCachedCounties());
 
             // Reset cache state for API call
             setCacheData(null);
@@ -81,11 +75,7 @@ export default function useCallForCountyInfo() {
         // Only store if we haven't stored this exact data before (prevent duplicates)
         if (lastStoredRef.current !== normalizedCountyName) {
             lastStoredRef.current = normalizedCountyName;
-            
-            console.log(`📦 Storing in cache: "${processedData.name}" -> normalized: "${normalizedCountyName}"`);
             countyDataCache.set(normalizedCountyName, processedData);
-            console.log(`✅ Successfully cached data for "${normalizedCountyName}"`);
-            console.log(`📊 Cache size after storage:`, countyDataCache.size());
         }
     }
 

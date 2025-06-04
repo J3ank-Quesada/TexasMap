@@ -293,8 +293,13 @@ export default function SidePanel({
               <button 
                 className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer" 
                 type="button"
+                onClick={() => {
+                  const countyName = selectedCounty?.replace(' County', '');
+                  const wikipediaUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(countyName + '_County,_Texas')}`;
+                  window.open(wikipediaUrl, '_blank');
+                }}
               >
-                Learn More
+                📖 Learn More on Wikipedia
               </button>
               <button 
                 className="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer" 

@@ -1,16 +1,17 @@
-'use server';
+import TexasMap from '@/components/texasMap/TexasMap';
+import React from 'react';
 
-import CityInfo from "@/components/cityInfo/CityInfo";
-
-export default async function Home() {
-  
-  
+/**
+ * Texas Page Component
+ * 
+ * This page displays the interactive Texas map at the /texas route.
+ * 
+ * @returns {React.JSX.Element} The Texas page with the interactive map
+ */
+export default function TexasPage(): React.JSX.Element {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-green-300">
-        Hello world!
-      </h1>
-      <CityInfo />
-    </div>
+    <main>
+      <TexasMap />
+    </main>
   );
-}
+} 

@@ -59,7 +59,6 @@ class CountyDataCacheService {
       data,
       timestamp: Date.now()
     };
-    console.log(`✓ Cached data for ${countyName}`);
   }
 
   /**
@@ -76,12 +75,10 @@ class CountyDataCacheService {
     }
 
     if (this.isCacheValid(cachedEntry.timestamp)) {
-      console.log(`✓ Cache hit for ${countyName} - using cached data`);
       return cachedEntry.data;
     }
     
     // Remove expired cache entry
-    console.log(`⚠ Cache expired for ${countyName} - removing from cache`);
     this.remove(countyName);
     return null;
   }
@@ -103,16 +100,13 @@ class CountyDataCacheService {
   public remove(countyName: string): void {
     const cacheKey = this.normalizeCountyName(countyName);
     delete this.cache[cacheKey];
-    console.log(`🗑 Removed ${countyName} from cache`);
   }
 
   /**
    * Clear all cached data
    */
   public clear(): void {
-    const size = this.size();
     this.cache = {};
-    console.log(`🗑 Cleared all cache data (${size} entries removed)`);
   }
 
   /**
@@ -192,9 +186,6 @@ class CountyDataCacheService {
     });
     
     const removedCount = initialSize - this.size();
-    if (removedCount > 0) {
-      console.log(`🧹 Cleaned up ${removedCount} expired cache entries`);
-    }
     
     return removedCount;
   }
