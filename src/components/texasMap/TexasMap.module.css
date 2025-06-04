@@ -51,6 +51,7 @@
   min-height: 400px;
   border: none;
   border-radius: 8px;
+  background: white;
 }
 
 .infoPanel {
@@ -73,6 +74,49 @@
   margin: 0;
   font-size: 0.9rem;
   opacity: 0.9;
+}
+
+/* Tooltip Styles */
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.tooltipContent {
+  background-color: #2c3e50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 200px;
+  text-align: center;
+}
+
+.tooltipContent strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.tooltipSubtext {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  color: #bdc3c7;
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #2c3e50;
 }
 
 .hoverInfo {
@@ -136,6 +180,17 @@
   }
 }
 
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
@@ -153,6 +208,16 @@
   .mapContainer {
     padding: 15px;
     margin: 15px 0;
+  }
+  
+  .tooltip {
+    /* On mobile, position tooltip above the finger */
+    transform: translateY(-60px);
+  }
+  
+  .tooltipContent {
+    font-size: 0.8rem;
+    padding: 6px 10px;
   }
   
   .hoverInfo {
