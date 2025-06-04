@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import SidePanel from '../sidePanel/SidePanel';
-import styles from './TexasMap.module.css';
 
 /**
  * Interface for tooltip position and content
@@ -104,7 +103,6 @@ export default function TexasMap(): React.JSX.Element {
     return <div>Loading...</div>;
   }
 
-
   /**
    * Formats county name for display
    * @param countyName - Raw county name from SVG
@@ -119,10 +117,10 @@ export default function TexasMap(): React.JSX.Element {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Texas Counties Interactive Map</h1>
-        <p className={styles.subtitle}>
+    <div className="flex flex-col items-center p-5 min-h-screen bg-gray-50 font-sans">
+      <div className="text-center mb-8 max-w-4xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3 drop-shadow-sm">Texas Counties Interactive Map</h1>
+        <p className="text-xl text-gray-600 m-0 leading-relaxed">
           Explore all 254 counties of Texas - Hover for details, click to select
         </p>
       </div>
@@ -130,19 +128,20 @@ export default function TexasMap(): React.JSX.Element {
       {/* Dynamic Tooltip */}
       {tooltip.visible && (
         <div 
-          className={styles.tooltip}
+          className="fixed z-[1000] pointer-events-none animate-in fade-in duration-200"
           style={{
-            left: `${tooltip.x + 15}px`,
+            left: `${tooltip.x - 20}px`,
             top: `${tooltip.y - 30}px`
           }}
         >
-          <div className={styles.tooltipContent}>
-            <strong>{formatCountyName(tooltip.county)}</strong>
-            <div className={styles.tooltipSubtext}>
+          <div className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm shadow-lg max-w-xs text-center relative">
+            <strong className="block font-semibold mb-1">{formatCountyName(tooltip.county)}</strong>
+            <div className="text-xs opacity-80 text-gray-300">
               Click to select • Part of Texas
             </div>
+            {/* Tooltip Arrow */}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
           </div>
-          <div className={styles.tooltipArrow}></div>
         </div>
       )}
 
@@ -154,10 +153,10 @@ export default function TexasMap(): React.JSX.Element {
       />
 
       {/* SVG Map Container */}
-      <div className={styles.mapContainer}>
+      <div className="flex justify-center items-center w-full max-w-5xl my-5 p-5 bg-white rounded-xl shadow-lg border border-gray-200">
         <iframe
           src="/texas-map.svg"
-          className={styles.svgMap}
+          className="w-full h-auto max-w-4xl min-h-[400px] border-none rounded-lg bg-white"
           title="Interactive map of Texas counties"
           onLoad={(e) => {
             console.log('SVG iframe loaded');
@@ -211,20 +210,6 @@ export default function TexasMap(): React.JSX.Element {
                     county.addEventListener('click', () => {
                       console.log('County clicked:', countyName);
                       handleCountyClick(countyName);
-                      
-                      // Reset all counties to default
-                      counties.forEach((c) => {
-                        (c as SVGElement).style.fill = '#e6f3ff';
-                        (c as SVGElement).style.stroke = '#0066cc';
-                        (c as SVGElement).style.strokeWidth = '1';
-                        (c as SVGElement).style.filter = 'none';
-                      });
-                      
-                      // Highlight selected county
-                      (county as SVGElement).style.fill = '#ff6b35';
-                      (county as SVGElement).style.stroke = '#cc5500';
-                      (county as SVGElement).style.strokeWidth = '3';
-                      (county as SVGElement).style.filter = 'drop-shadow(0 4px 8px rgba(255, 107, 53, 0.4))';
                     });
                   }
                 });
@@ -241,17 +226,17 @@ export default function TexasMap(): React.JSX.Element {
       </div>
 
       {/* Map Attribution and Info */}
-      <div className={styles.attribution}>
-        <p>
+      <div className="mt-8 text-center text-sm text-gray-600">
+        <p className="my-1">
           Texas Counties Map • 254 Counties • Interactive SVG Map
         </p>
-        <p>
+        <p className="my-1">
           Original map data from{' '}
           <a 
             href="https://mapsvg.com/maps/usa-tx" 
             target="_blank" 
             rel="noopener noreferrer"
-            className={styles.attributionLink}
+            className="text-blue-600 no-underline font-medium hover:text-blue-800 hover:underline transition-colors duration-200"
           >
             MapSVG
           </a>
