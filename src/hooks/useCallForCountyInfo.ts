@@ -1,8 +1,18 @@
 import { getCountyInfo, processCensusData } from "@/apis/countyInfoAPIs";
 import { countyDataCache } from "@/services/countyDataCache";
 import { CountyInfo, GetCountyInfoData } from "@/types";
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useHttpRequest } from "./useHttpRequest";
+
+/**
+ * Normalize county name for consistent caching
+ * Handles formats like "Harris County, Texas" -> "Harris"
+ */
+const normalizeCountyName = (countyName: string): string => {
+    return countyName
+        .replace(/\s*county\s*(,\s*texas)?\s*$/i, '') // Remove "County" and optional ", Texas"
+        .trim();
+};
 
 /**
  * Custom hook for fetching county information from US Census Bureau API
@@ -15,8 +25,9 @@ export default function useCallForCountyInfo() {
         { immediate: false }
     );
 
-    const [cacheHit, setCacheHit] = useState<CountyInfo | null>(null);
+    const [cacheData, setCacheData] = useState<CountyInfo | null>(null);
     const [isFromCache, setIsFromCache] = useState(false);
+    const lastStoredRef = useRef<string | null>(null);
 
     /**
      * Fetch county information by county name
@@ -25,25 +36,36 @@ export default function useCallForCountyInfo() {
      */
     const callForCountyInfo = useCallback(async ({ countyName }: GetCountyInfoData) => {
         try {
+            // Normalize the county name for consistent cache lookup
+            const normalizedCountyName = normalizeCountyName(countyName);
+            console.log(`🔍 Looking for county: "${countyName}" -> normalized: "${normalizedCountyName}"`);
+            
             // Check cache first using the cache service
-            const cachedData = countyDataCache.get(countyName);
+            const cachedData = countyDataCache.get(normalizedCountyName);
             if (cachedData) {
-                setCacheHit(cachedData);
+                console.log(`✅ Cache HIT for "${normalizedCountyName}" - using cached data`);
+                console.log(`📊 Cache stats:`, countyDataCache.getStats());
+                setCacheData(cachedData);
                 setIsFromCache(true);
                 return;
             }
 
-            // Reset cache hit state
-            setCacheHit(null);
+            console.log(`❌ Cache MISS for "${normalizedCountyName}" - fetching from API`);
+            console.log(`📊 Current cache contents:`, countyDataCache.getCachedCounties());
+
+            // Reset cache state for API call
+            setCacheData(null);
             setIsFromCache(false);
+            lastStoredRef.current = null; // Reset storage tracking
 
             // Make API call if not in cache
-            console.log(`⚡ Cache miss for ${countyName} - fetching from API`);
-            const requestUrl = getCountyInfo({ countyName });
+            const requestUrl = getCountyInfo({ countyName: normalizedCountyName });
             await execute(requestUrl);
         } catch (err) {
             // Handle county not found errors
             console.error('Error fetching county info:', err);
+            setIsFromCache(false);
+            setCacheData(null);
             throw err;
         }
     }, [execute]);
@@ -51,25 +73,34 @@ export default function useCallForCountyInfo() {
     // Process the raw Census data to extract county information
     const processedData: CountyInfo | null = rawData ? processCensusData(rawData) : null;
 
-    // Store successful API responses in cache using the cache service
+    // Store successful API responses in cache (only when not from cache and data exists)
     if (processedData && !isFromCache && !isLoading && !isError) {
-        // Get the county name from the processed data to use as cache key
-        const countyNameFromData = processedData.name.replace(' County', '');
-        countyDataCache.set(countyNameFromData, processedData);
+        // Normalize the county name for consistent cache storage
+        const normalizedCountyName = normalizeCountyName(processedData.name);
+        
+        // Only store if we haven't stored this exact data before (prevent duplicates)
+        if (lastStoredRef.current !== normalizedCountyName) {
+            lastStoredRef.current = normalizedCountyName;
+            
+            console.log(`📦 Storing in cache: "${processedData.name}" -> normalized: "${normalizedCountyName}"`);
+            countyDataCache.set(normalizedCountyName, processedData);
+            console.log(`✅ Successfully cached data for "${normalizedCountyName}"`);
+            console.log(`📊 Cache size after storage:`, countyDataCache.size());
+        }
     }
 
-    // Return cached data if available, otherwise return processed API data
-    const finalData = isFromCache ? cacheHit : processedData;
+    // Return appropriate data: cache data if from cache, otherwise processed API data
+    const finalData = isFromCache ? cacheData : processedData;
 
     return { 
         data: finalData, 
         rawData,
-        isLoading: isFromCache ? false : isLoading, // Don't show loading if using cache
+        isLoading: isFromCache ? false : isLoading,
         isError, 
         error, 
         callForCountyInfo,
-        isFromCache, // Expose whether data came from cache
-        cacheSize: countyDataCache.size(), // Get cache size from service
+        isFromCache,
+        cacheSize: countyDataCache.size(),
         // Additional cache utilities
         getCachedCounties: countyDataCache.getCachedCounties.bind(countyDataCache),
         getCacheStats: countyDataCache.getStats.bind(countyDataCache),

@@ -98,8 +98,6 @@ export function useHttpRequest<T = unknown>(
     setIsLoading(true);
     setIsError(false);
     setError(undefined);
-    // Optionally, clear previous data: setData(undefined);
-    // For now, retain previous data until new data arrives or an error occurs specific to this execute call.
 
     let currentUrl = urlRef.current;
     let currentOptions: BaseHttpRequestOptions = { ...optionsRef.current };
@@ -158,6 +156,7 @@ export function useHttpRequest<T = unknown>(
   // Trigger effect if `immediate` changes, or if `initialUrl` or `baseOptions` change, making `execute` call with new values.
   // `execute` itself is stable. `initialData` is included to re-evaluate skipping the fetch.
   // `data` and `isLoading` were removed from here to prevent potential loops.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [immediate, initialUrl, baseOptions, initialData, execute]);
 
   return { data, isLoading, isError, error, execute };
