@@ -40,7 +40,7 @@ export default function MapTooltip({ tooltip }: MapTooltipProps): React.JSX.Elem
   }
 
   // Use the exact position calculated from the county element
-  const tooltipX = tooltip.x - 100; // Center the tooltip horizontally above the county
+  const tooltipX = tooltip.x - 100;
   const tooltipY = tooltip.y;
 
   return (
@@ -56,7 +56,7 @@ export default function MapTooltip({ tooltip }: MapTooltipProps): React.JSX.Elem
           {formatCountyName(tooltip.county)}
         </strong>
         <div className="text-xs opacity-80 text-gray-300">
-          Click to select • Part of Texas
+          Click to select
         </div>
         {/* Tooltip Arrow */}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
