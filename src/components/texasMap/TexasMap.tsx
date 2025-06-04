@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import SidePanel from '../sidePanel/SidePanel';
 import styles from './TexasMap.module.css';
 
 /**
@@ -28,6 +29,7 @@ interface TooltipData {
 export default function TexasMap(): React.JSX.Element {
   const [isHydrated, setIsHydrated] = useState(false);
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipData>({
     x: 0,
     y: 0,
@@ -39,14 +41,22 @@ export default function TexasMap(): React.JSX.Element {
     setIsHydrated(true);
   }, []);
 
-
   /**
    * Handles click events on map counties
    * @param countyName - Name of the clicked county
    */
   const handleCountyClick = useCallback((countyName: string): void => {
     setSelectedCounty(countyName);
+    setIsPanelVisible(true);
     console.log(`Selected county: ${countyName}`);
+  }, []);
+
+  /**
+   * Handles closing the side panel
+   */
+  const handleClosePanel = useCallback((): void => {
+    setIsPanelVisible(false);
+    setSelectedCounty(null);
   }, []);
 
   /**
@@ -117,14 +127,6 @@ export default function TexasMap(): React.JSX.Element {
         </p>
       </div>
 
-      {/* Display selected county info */}
-      {selectedCounty && (
-        <div className={styles.infoPanel}>
-          <h3>Selected County: {formatCountyName(selectedCounty)}</h3>
-          <p>Click on other counties to explore more areas of Texas</p>
-        </div>
-      )}
-
       {/* Dynamic Tooltip */}
       {tooltip.visible && (
         <div 
@@ -143,6 +145,13 @@ export default function TexasMap(): React.JSX.Element {
           <div className={styles.tooltipArrow}></div>
         </div>
       )}
+
+      {/* Side Panel */}
+      <SidePanel 
+        selectedCounty={selectedCounty}
+        onClose={handleClosePanel}
+        isVisible={isPanelVisible}
+      />
 
       {/* SVG Map Container */}
       <div className={styles.mapContainer}>
