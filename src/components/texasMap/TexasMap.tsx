@@ -31,7 +31,18 @@ export default function TexasMap(): React.JSX.Element {
   
   // Custom hooks for separated concerns
   const { tooltip, showTooltip, updateTooltipPosition, hideTooltip } = useTooltip();
-  const { selectedCounty, isPanelVisible, selectCounty, closePanel } = useCountySelection();
+  const { 
+    selectedCounty, 
+    isPanelVisible, 
+    selectCounty, 
+    closePanel,
+    countyData,
+    isLoadingCountyData,
+    isCountyDataError,
+    countyDataError,
+    isFromCache,
+    cacheSize
+  } = useCountySelection();
   
   // SVG map interaction handlers
   const mapHandlers = {
@@ -63,7 +74,7 @@ export default function TexasMap(): React.JSX.Element {
           Texas Counties Interactive Map
         </h1>
         <p className="text-xl text-gray-600 m-0 leading-relaxed">
-          Explore all 254 counties of Texas - Hover for details, click to select
+          Explore all 254 counties of Texas - Hover for name, click to see more information about the county
         </p>
       </header>
 
@@ -75,6 +86,12 @@ export default function TexasMap(): React.JSX.Element {
         selectedCounty={selectedCounty}
         onClose={closePanel}
         isVisible={isPanelVisible}
+        countyData={countyData}
+        isLoadingCountyData={isLoadingCountyData}
+        isCountyDataError={isCountyDataError}
+        countyDataError={countyDataError}
+        isFromCache={isFromCache}
+        cacheSize={cacheSize}
       />
 
       {/* SVG Map Container - Takes remaining space */}

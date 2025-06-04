@@ -7,7 +7,7 @@ import { setDefaultCountyStyles, setHoverCountyStyles } from '../utils/mapStylin
  */
 interface SVGMapHandlers {
   onCountyHover: (countyName: string, event: Event) => void;
-  onCountyMove: (event: Event) => void;
+  onCountyMove: () => void;
   onCountyLeave: () => void;
   onCountyClick: (countyName: string) => void;
 }
@@ -56,8 +56,6 @@ export const useSVGMapInteractions = (handlers: SVGMapHandlers) => {
           handlers.onCountyHover(countyName, event);
           setHoverCountyStyles(countyElement);
         });
-        
-        county.addEventListener('mousemove', handlers.onCountyMove);
         
         county.addEventListener('mouseleave', () => {
           console.log('Mouse leave:', countyName);

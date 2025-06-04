@@ -39,12 +39,16 @@ export default function MapTooltip({ tooltip }: MapTooltipProps): React.JSX.Elem
     return null;
   }
 
+  // Use the exact position calculated from the county element
+  const tooltipX = tooltip.x - 100; // Center the tooltip horizontally above the county
+  const tooltipY = tooltip.y;
+
   return (
     <div 
       className="fixed z-[1000] pointer-events-none animate-in fade-in duration-200"
       style={{
-        left: `${tooltip.x - 20}px`,
-        top: `${tooltip.y - 30}px`
+        left: `${tooltipX}px`,
+        top: `${tooltipY}px`
       }}
     >
       <div className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm shadow-lg max-w-xs text-center relative">
