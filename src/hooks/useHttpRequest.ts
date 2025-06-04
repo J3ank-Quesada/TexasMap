@@ -142,7 +142,7 @@ export function useHttpRequest<T = unknown>(
         setIsLoading(false);
       }
     }
-  }, []); // useCallback dependencies are empty as it uses refs updated by useEffect.
+  }, []);
 
   useEffect(() => {
     if (immediate) {
